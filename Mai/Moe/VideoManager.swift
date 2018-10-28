@@ -12,6 +12,9 @@ import Alamofire
 import RxAlamofire
 import SwiftyJSON
 import FileKit
+import Cocoa
+import Reachability
+import RxReachability
 
 final class VideoManager {
 
@@ -20,10 +23,10 @@ final class VideoManager {
 
         static let id = "com.v2ambition.mai"
         static let cachePath = Path.userMovies + "Mai" + ".cache"
-        static let likePath = Path.userMovies + "Mai" + "liked"
-        static let dislikePath = Path.userMovies + "Mai" + ".disliked"
+        static let likePath = Path.userMovies + "Mai" + "like"
+        static let dislikePath = Path.userMovies + "Mai" + ".dislike"
 
-        static let apiHost = "animeloop.org/api/v2"
+        static let apiHost = "animeloop.org"
         static let baseURL = "https://animeloop.org/api/v2"
 
         static let ascending = { (lhs: Path, rhs: Path) -> Bool in
@@ -33,13 +36,29 @@ final class VideoManager {
     }
 
     private let ioQueue = DispatchQueue(label: UUID().uuidString)
-    private let reachabilityMgr = NetworkReachabilityManager(host: K.apiHost)
+    private let disposeBag = DisposeBag()
+    private let reachability = Reachability(hostname: K.apiHost)
     private var fetchDisposable: Disposable?
-    private let videoSubject = PublishSubject<String>()
 
     private init() {
         createDirIfNeeded()
+        copyDefaultVideo()
         cleanCacheDirIfNeede()
+
+        reachability?.rx
+            .status
+            .distinctUntilChanged()
+            .bind { [weak self] c in
+                Logger.debug("API reachability changed,", "connection: \(c)")
+                if c == .none {
+                    Logger.warn("API is unreachable, Stop fetching new videos")
+                    self?.fetchDisposable?.dispose()
+                } else {
+                    Logger.info("API is reachable, Start to fetch a new video")
+                    self?.fetch()
+                }
+            }
+            .disposed(by: disposeBag)
     }
 
     static let shared = VideoManager()
@@ -52,6 +71,17 @@ final class VideoManager {
                 } catch let err {
                     Logger.error("Failed to create directory", p, err)
                 }
+            }
+        }
+    }
+
+    private func copyDefaultVideo() {
+        if let path = Bundle.main.path(forResource: "5bbadd3466e1f3205b7e4e98", ofType: "mp4") {
+            let video = Path(path)
+            do {
+                try video.moveFile(to: K.cachePath + video.fileName)
+            } catch let err {
+                Logger.error("Failed to copy default video", err)
             }
         }
     }
@@ -83,7 +113,9 @@ final class VideoManager {
                 }
             }
 
-            Logger.cheer("Cache dir has been cleaned", deleted)
+            if !deleted.isEmpty {
+                Logger.cheer("Cache dir has been cleaned", deleted)
+            }
             DispatchQueue.global().asyncAfter(deadline: .now() + 15) { [weak self] in
                 self?.cleanCacheDirIfNeede()
             }
@@ -118,10 +150,10 @@ final class VideoManager {
                 let dest = K.likePath + path.fileName
                 guard !dest.exists else { return }
                 do {
-                    Logger.info("Copy the video to liked path", dest)
+                    Logger.info("Copy the video to like path", dest)
                     try path.copyFile(to: dest)
                 } catch let err {
-                    Logger.error("Failed to move file to liked dir", dest, err)
+                    Logger.error("Failed to move file to like dir", dest, err)
                 }
             }
         }
@@ -132,33 +164,21 @@ final class VideoManager {
             if let path = Path(url: url), path.exists {
                 let dest = K.dislikePath + path.fileName
                 do {
-                    Logger.info("Move the video to disliked path", dest)
+                    Logger.info("Move the video to dislike path", dest)
                     try path.moveFile(to: dest)
                 } catch let err {
-                    Logger.error("Failed to move file to disliked dir", dest, err)
+                    Logger.error("Failed to move file to dislike dir", dest, err)
                 }
             }
         }
     }
 
     func fetchIfPossible() {
-        if reachabilityMgr?.listener == nil {
-            reachabilityMgr?.listener = { [weak self] status in
-                Logger.debug("API reachability changed,", "status: \(status)")
-                guard let self = self, let mgr = self.reachabilityMgr else { return }
-                if mgr.isReachable {
-                    Logger.info("API is reachable, Start to fetch a new video")
-                    self.fetch()
-                } else {
-                    Logger.warn("API is unreachable, Stop fetching new videos")
-                    self.fetchDisposable?.dispose()
-                }
-            }
-        }
-        reachabilityMgr?.startListening()
+        try? reachability?.startNotifier()
     }
 
     private func fetch() {
+
         Logger.debug("Fetching...")
         fetchDisposable = RxAlamofire
             .json(.get,
@@ -173,14 +193,13 @@ final class VideoManager {
             }
             .subscribe(onNext: { [weak self] (url, data) in
                 let fileName = Path(url).fileName
-                Logger.cheer("A new video has been downloaded", fileName)
                 let dest = K.cachePath + fileName
                 do {
                     try self?.ioQueue.sync {
                         try data.write(to: dest)
                     }
                     EventBus.newVideo.accept(dest.url)
-                    Logger.cheer("A new video has been written to disk", dest)
+                    Logger.cheer("A new video has been downloaded and written to disk", fileName)
                     DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
                         self?.fetch()
                     }
@@ -197,6 +216,6 @@ final class VideoManager {
 
     func stopTryingFetching() {
         fetchDisposable?.dispose()
-        reachabilityMgr?.stopListening()
+        reachability?.stopNotifier()
     }
 }

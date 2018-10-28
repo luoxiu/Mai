@@ -11,5 +11,6 @@ target 'Mai' do
   pod 'FileKit', '~> 5.0.0'
   
   pod 'RxAlamofire'
+  pod 'RxReachability'
 
 end

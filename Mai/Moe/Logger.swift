@@ -35,8 +35,8 @@ struct Logger {
         case .error: 	char = "❌"
         case .cheer: 	char = "🎉"
         }
-        let msg = items.map({ "\($0)" }).joined(separator: " ")
-        let filename = Path(file).fileName
+        let msg = items.map({ "\($0)" }).joined(separator: ", ")
+        let filename = Path(file).fileName.split(separator: ".").first!
         print("[\(time)] \(char) \(filename).\(function) - \(msg)")
     }
 
