@@ -49,7 +49,7 @@ final class VideoManager {
             .status
             .distinctUntilChanged()
             .bind { [weak self] c in
-                Logger.debug("API reachability changed,", "connection: \(c)")
+                Logger.debug("API reachability changed", "connection: \(c)")
                 if c == .none {
                     Logger.warn("API is unreachable, Stop fetching new videos")
                     self?.fetchDisposable?.dispose()
@@ -77,11 +77,14 @@ final class VideoManager {
 
     private func copyDefaultVideo() {
         if let path = Bundle.main.path(forResource: "5bbadd3466e1f3205b7e4e98", ofType: "mp4") {
-            let video = Path(path)
-            do {
-                try video.moveFile(to: K.cachePath + video.fileName)
-            } catch let err {
-                Logger.error("Failed to copy default video", err)
+            let from = Path(path)
+            let to = K.cachePath + from.fileName
+            if !to.exists {
+                do {
+                    try from.moveFile(to: to)
+                } catch let err {
+                    Logger.error("Failed to copy default video", err)
+                }
             }
         }
     }
@@ -163,6 +166,9 @@ final class VideoManager {
         ioQueue.sync {
             if let path = Path(url: url), path.exists {
                 let dest = K.dislikePath + path.fileName
+                if dest.exists {
+                    try? dest.deleteFile()
+                }
                 do {
                     Logger.info("Move the video to dislike path", dest)
                     try path.moveFile(to: dest)
@@ -196,10 +202,14 @@ final class VideoManager {
                 let dest = K.cachePath + fileName
                 do {
                     try self?.ioQueue.sync {
-                        try data.write(to: dest)
+                        if dest.exists {
+                            Logger.info("A new video has been downloaded but we already have it", fileName)
+                        } else {
+                            Logger.cheer("A new video has been downloaded and written to disk", fileName)
+                            try data.write(to: dest)
+                        }
                     }
                     EventBus.newVideo.accept(dest.url)
-                    Logger.cheer("A new video has been downloaded and written to disk", fileName)
                     DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
                         self?.fetch()
                     }

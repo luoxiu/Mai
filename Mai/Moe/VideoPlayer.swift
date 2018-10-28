@@ -26,7 +26,6 @@ final class VideoPlayer {
             .bind { [weak self] (url) in
                 self?.opQueue.sync {
                     self?.urls.insert(url, at: 0)
-                    self?.play()
                 }
             }
             .disposed(by: disposeBag)
@@ -99,14 +98,23 @@ final class VideoPlayer {
 
         urls = VideoManager.shared.allCachedVideo
         Logger.debug("Video player got \(urls.count) urls from cache", "Start to play them")
-        play()
+
+        opQueue.sync {
+            play()
+        }
     }
 
     private func play() {
+        if !DispatchQueue.isCurrent(opQueue) {
+            Logger.warn("Operation is not on opQueue, which may lead to an unpredictable consequence.")
+        }
+
         timer?.invalidate()
         defer {
             timer = Timer.scheduledTimer(withTimeInterval: 10, repeats: true) { [weak self] (_) in
-                self?.play()
+                self?.opQueue.sync {
+                    self?.play()
+                }
             }
         }
 

@@ -26,18 +26,21 @@ struct Logger {
     }()
 
     private static func log(file: String = #file, function: String = #function, line: UInt = #line, level: Level, _ items: [Any]) {
-        let time = formatter.string(from: Date())
-        var char = ""
-        switch level {
-        case .debug:    char = "🌀"
-        case .warn:     char = "❗️"
-        case .info:     char = "💧"
-        case .error: 	char = "❌"
-        case .cheer: 	char = "🎉"
+        runInDebug {
+            let time = formatter.string(from: Date())
+            var char = ""
+            switch level {
+            case .debug:    char = "🌀"
+            case .warn:     char = "❗️"
+            case .info:     char = "💧"
+            case .error:     char = "❌"
+            case .cheer:     char = "🎉"
+            }
+            let msg = items.map({ "\($0)" }).joined(separator: ", ")
+            let filename = Path(file).fileName.split(separator: ".").first!
+            
+            print("[\(time)] \(char) \(filename).\(function): \(msg)")
         }
-        let msg = items.map({ "\($0)" }).joined(separator: ", ")
-        let filename = Path(file).fileName.split(separator: ".").first!
-        print("[\(time)] \(char) \(filename).\(function) - \(msg)")
     }
 
     static func error(file: String = #file, function: String = #function, line: UInt = #line, _ items: Any...) {
