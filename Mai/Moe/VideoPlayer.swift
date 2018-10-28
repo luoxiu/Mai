@@ -76,9 +76,11 @@ final class VideoPlayer {
 
         EventBus.next
             .bind { [weak self] (_) in
-                self?.opQueue.sync {
-                    self?.urls.removeFirst()
-                    self?.play()
+                guard let self = self else { return }
+                self.opQueue.sync {
+                    guard !self.urls.isEmpty else { return }
+                    self.urls.append(self.urls.removeFirst())
+                    self.play()
                 }
             }
             .disposed(by: disposeBag)

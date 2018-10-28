@@ -63,7 +63,6 @@ extension AppDelegate {
     }
 
     @objc func nextDidTap(_ item: NSMenuItem) {
-        Logger.debug("next did tap")
         EventBus.next.accept(())
     }
 
