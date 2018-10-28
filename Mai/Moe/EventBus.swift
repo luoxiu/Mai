@@ -14,9 +14,11 @@ enum EventBus {
 
     static let newVideo = PublishRelay<URL>()
 
-    static let like = PublishRelay<()>()
+    static let like = PublishRelay<Void>()
 
-    static let next = PublishRelay<()>()
+    static let dislike = PublishRelay<Void>()
+
+    static let next = PublishRelay<Void>()
 
     static let volume = BehaviorRelay<Float>(value: 0)
 
@@ -26,5 +28,5 @@ enum EventBus {
 
     static let isPaused = BehaviorRelay<Bool>(value: false)
 
-    static let onlyFavorites = BehaviorRelay<Bool>(value: false)
+    static let onlyLiked = BehaviorRelay<Bool>(value: false)
 }

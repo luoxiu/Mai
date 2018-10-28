@@ -31,11 +31,11 @@ final class VideoPlayer {
             }
             .disposed(by: disposeBag)
 
-        EventBus.onlyFavorites
+        EventBus.onlyLiked
             .bind { [weak self] flag in
                 if flag {
-                    VideoManager.shared.stopFetching()
-                    let urls = VideoManager.shared.allFavoriteVideos
+                    VideoManager.shared.stopTryingFetching()
+                    let urls = VideoManager.shared.allLikedVideos
                     if !urls.isEmpty {
                         self?.opQueue.sync {
                             self?.urls = urls
@@ -43,6 +43,7 @@ final class VideoPlayer {
                         }
                     }
                 } else {
+                    VideoManager.shared.fetchIfPossible()
                     let urls = VideoManager.shared.allCachedVideo
                     self?.opQueue.sync {
                         self?.urls = urls
@@ -54,8 +55,22 @@ final class VideoPlayer {
 
         EventBus.like
             .bind { [weak self] in
-                if let url = self?.currentURL {
-                    VideoManager.shared.like(url)
+                self?.opQueue.sync {
+                    if let url = self?.currentURL {
+                        VideoManager.shared.like(url)
+                    }
+                }
+            }
+            .disposed(by: disposeBag)
+
+        EventBus.dislike
+            .bind { [weak self] in
+                self?.opQueue.sync {
+                    if let url = self?.currentURL {
+                        VideoManager.shared.dislike(url)
+                        self?.urls.removeFirst()
+                        self?.play()
+                    }
                 }
             }
             .disposed(by: disposeBag)
@@ -89,6 +104,11 @@ final class VideoPlayer {
 
     private func play() {
         timer?.invalidate()
+        defer {
+            timer = Timer.scheduledTimer(withTimeInterval: 10, repeats: true) { [weak self] (_) in
+                self?.play()
+            }
+        }
 
         guard urls.count > 0 else {
             return
@@ -102,9 +122,5 @@ final class VideoPlayer {
         player.actionAtItemEnd = .none
         currentURL = url
         player.play()
-
-        timer = Timer.scheduledTimer(withTimeInterval: 10, repeats: true) { [weak self] (_) in
-            self?.play()
-        }
     }
 }

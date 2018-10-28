@@ -19,8 +19,11 @@ final class VideoManager {
         static let cacheSizeLimit = 100 * (1 << 20)  // 100 MB
 
         static let id = "com.v2ambition.mai"
-        static let cachePath = Path.userMovies + "Mai" + "Cache"
-        static let favoritesPath = Path.userMovies + "Mai" + "Favorites"
+        static let cachePath = Path.userMovies + "Mai" + ".cache"
+        static let likePath = Path.userMovies + "Mai" + "liked"
+        static let dislikePath = Path.userMovies + "Mai" + ".disliked"
+
+        static let apiHost = "animeloop.org/api/v2"
         static let baseURL = "https://animeloop.org/api/v2"
 
         static let ascending = { (lhs: Path, rhs: Path) -> Bool in
@@ -30,7 +33,7 @@ final class VideoManager {
     }
 
     private let ioQueue = DispatchQueue(label: UUID().uuidString)
-    private let reachabilityMgr = NetworkReachabilityManager(host: K.baseURL)
+    private let reachabilityMgr = NetworkReachabilityManager(host: K.apiHost)
     private var fetchDisposable: Disposable?
     private let videoSubject = PublishSubject<String>()
 
@@ -42,7 +45,7 @@ final class VideoManager {
     static let shared = VideoManager()
 
     private func createDirIfNeeded() {
-        for p in [K.cachePath, K.favoritesPath] {
+        for p in [K.cachePath, K.likePath, K.dislikePath] {
             if !p.exists {
                 do {
                     try p.createDirectory()
@@ -64,6 +67,7 @@ final class VideoManager {
                 .reversed()
                 .map({ $0 })
 
+            var deleted: [Path] = []
             while totalSize > (K.cacheSizeLimit / 3 * 2) {
                 guard let path = files.popLast() else {
                     Logger.error("No file???")
@@ -73,11 +77,13 @@ final class VideoManager {
                     guard let fileSize = path.fileSize else { continue }
                     totalSize -= fileSize
                     try path.deleteFile()
-                    Logger.cheer("A video has been deleted from cache", path)
+                    deleted.append(path)
                 } catch let err {
                     Logger.error("Failed to delete file", path, err)
                 }
             }
+
+            Logger.cheer("Cache dir has been cleaned", deleted)
             DispatchQueue.global().asyncAfter(deadline: .now() + 15) { [weak self] in
                 self?.cleanCacheDirIfNeede()
             }
@@ -95,9 +101,9 @@ final class VideoManager {
         }
     }
 
-    var allFavoriteVideos: [URL] {
+    var allLikedVideos: [URL] {
         return ioQueue.sync {
-            return K.favoritesPath
+            return K.likePath
                 .children()
                 .filter({ $0.pathExtension == "mp4" })
                 .sorted(by: K.ascending)
@@ -109,12 +115,27 @@ final class VideoManager {
     func like(_ url: URL) {
         ioQueue.sync {
             if let path = Path(url: url) {
-                let dest = K.favoritesPath + path.fileName
+                let dest = K.likePath + path.fileName
+                guard !dest.exists else { return }
                 do {
-                    Logger.info("Copy the liked video to favorites path", dest)
+                    Logger.info("Copy the video to liked path", dest)
                     try path.copyFile(to: dest)
                 } catch let err {
-                    Logger.error("Failed to move file to favorites dir", dest, err)
+                    Logger.error("Failed to move file to liked dir", dest, err)
+                }
+            }
+        }
+    }
+
+    func dislike(_ url: URL) {
+        ioQueue.sync {
+            if let path = Path(url: url), path.exists {
+                let dest = K.dislikePath + path.fileName
+                do {
+                    Logger.info("Move the video to disliked path", dest)
+                    try path.moveFile(to: dest)
+                } catch let err {
+                    Logger.error("Failed to move file to disliked dir", dest, err)
                 }
             }
         }
@@ -128,11 +149,9 @@ final class VideoManager {
                 if mgr.isReachable {
                     Logger.info("API is reachable, Start to fetch a new video")
                     self.fetch()
-                } else if mgr.networkReachabilityStatus == .unknown {
-                    Logger.info("we don't do anything")
                 } else {
                     Logger.warn("API is unreachable, Stop fetching new videos")
-                    self.fetchDisposable = nil
+                    self.fetchDisposable?.dispose()
                 }
             }
         }
@@ -176,8 +195,8 @@ final class VideoManager {
             })
     }
 
-    func stopFetching() {
-        fetchDisposable = nil
+    func stopTryingFetching() {
+        fetchDisposable?.dispose()
         reachabilityMgr?.stopListening()
     }
 }

@@ -20,7 +20,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         setupStatusItem()
         reloadWindows()
 
-//        VideoManager.shared.fetchIfPossible()
+        VideoManager.shared.fetchIfPossible()
     }
 
     var disposeBag = DisposeBag()
@@ -51,10 +51,11 @@ extension AppDelegate {
         let shadow = NSMenuItem(title: "Shadow", action: #selector(AppDelegate.shadowDidTap(_:)), keyEquivalent: "")
         shadow.state = .on
         menu.addItem(shadow)
-        menu.addItem(NSMenuItem(title: "Only Favorites", action: #selector(AppDelegate.onlyFavoritesDidTap(_:)), keyEquivalent: ""))
+        menu.addItem(NSMenuItem(title: "Only Liked", action: #selector(AppDelegate.onlyLikedDidTap(_:)), keyEquivalent: ""))
         menu.addItem(NSMenuItem.separator())
-        menu.addItem(NSMenuItem(title: "Next", action: #selector(AppDelegate.nextDidTap(_:)), keyEquivalent: ""))
-        menu.addItem(NSMenuItem(title: "Like", action: #selector(AppDelegate.likeDidTap(_:)), keyEquivalent: ""))
+        menu.addItem(NSMenuItem(title: "Next", action: #selector(AppDelegate.nextDidTap(_:)), keyEquivalent: "N"))
+        menu.addItem(NSMenuItem(title: "Like", action: #selector(AppDelegate.likeDidTap(_:)), keyEquivalent: "L"))
+        menu.addItem(NSMenuItem(title: "Dislike", action: #selector(AppDelegate.dislikeDidTap(_:)), keyEquivalent: "D"))
         menu.addItem(NSMenuItem.separator())
         menu.addItem(NSMenuItem(title: "Quit", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "Q"))
 
@@ -70,16 +71,20 @@ extension AppDelegate {
         EventBus.like.accept(())
     }
 
+    @objc func dislikeDidTap(_ item: NSMenuItem) {
+        EventBus.dislike.accept(())
+    }
+
     @objc func shadowDidTap(_ item: NSMenuItem) {
         let value = EventBus.isShadowed.value
         item.state = value ? .off : .on
         EventBus.isShadowed.accept(!value)
     }
 
-    @objc func onlyFavoritesDidTap(_ item: NSMenuItem) {
-        let value = EventBus.onlyFavorites.value
+    @objc func onlyLikedDidTap(_ item: NSMenuItem) {
+        let value = EventBus.onlyLiked.value
         item.state = value ? .off : .on
-        EventBus.onlyFavorites.accept(!value)
+        EventBus.onlyLiked.accept(!value)
     }
 
     @objc func checkForUpdatesDidTap(_ item: NSMenuItem) {
