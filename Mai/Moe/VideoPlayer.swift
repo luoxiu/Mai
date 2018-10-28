@@ -33,7 +33,6 @@ final class VideoPlayer {
         EventBus.onlyLiked
             .bind { [weak self] flag in
                 if flag {
-                    VideoManager.shared.stopTryingFetching()
                     let urls = VideoManager.shared.allLikedVideos
                     if !urls.isEmpty {
                         self?.opQueue.sync {
@@ -42,7 +41,6 @@ final class VideoPlayer {
                         }
                     }
                 } else {
-                    VideoManager.shared.fetchIfPossible()
                     let urls = VideoManager.shared.allCachedVideo
                     self?.opQueue.sync {
                         self?.urls = urls

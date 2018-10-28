@@ -39,6 +39,7 @@ final class VideoManager {
     private let disposeBag = DisposeBag()
     private let reachability = Reachability(hostname: K.apiHost)
     private var fetchDisposable: Disposable?
+    private weak var retryTimer: Timer?
 
     private init() {
         createDirIfNeeded()
@@ -49,13 +50,27 @@ final class VideoManager {
             .status
             .distinctUntilChanged()
             .bind { [weak self] c in
+                guard let self = self else { return }
                 Logger.debug("API reachability changed", "connection: \(c)")
                 if c == .none {
-                    Logger.warn("API is unreachable, Stop fetching new videos")
-                    self?.fetchDisposable?.dispose()
+                    Logger.warn("API is unreachable, stop fetching new videos")
+                    self.fetchDisposable = nil
+                    self.retryTimer?.invalidate()
                 } else {
-                    Logger.info("API is reachable, Start to fetch a new video")
-                    self?.fetch()
+                    Logger.info("API is reachable, start to fetch a new video")
+                    if self.fetchDisposable == nil && self.retryTimer == nil {
+                        self.fetch()
+                    }
+                }
+            }
+            .disposed(by: disposeBag)
+
+        EventBus.onlyLiked
+            .bind { [weak self] flag in
+                if flag {
+                    self?.stopTryingFetching()
+                } else {
+                    self?.fetchIfPossible()
                 }
             }
             .disposed(by: disposeBag)
@@ -180,12 +195,16 @@ final class VideoManager {
     }
 
     func fetchIfPossible() {
+        Logger.info("Fetch If Possible")
         try? reachability?.startNotifier()
+        if fetchDisposable == nil && retryTimer == nil {
+            fetch()
+        }
     }
 
     private func fetch() {
-
-        Logger.debug("Fetching...")
+        Logger.info("Fetching...")
+        retryTimer?.invalidate()
         fetchDisposable = RxAlamofire
             .json(.get,
                   K.baseURL + "/rand/loop",
@@ -210,22 +229,24 @@ final class VideoManager {
                         }
                     }
                     EventBus.newVideo.accept(dest.url)
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
+                    self?.retryTimer = Timer.scheduledTimer(withTimeInterval: 5, repeats: false, block: { (_) in
                         self?.fetch()
-                    }
+                    })
                 } catch let err {
                     Logger.error("Failed to write video to disk", dest, err)
                 }
             }, onError: { [weak self] (err) in
                 Logger.error("Failed to download video", err)
-                DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                self?.retryTimer = Timer.scheduledTimer(withTimeInterval: 5, repeats: false, block: { (_) in
                     self?.fetch()
-                }
+                })
             })
     }
 
     func stopTryingFetching() {
-        fetchDisposable?.dispose()
+        Logger.info("Stop Trying Fetching")
         reachability?.stopNotifier()
+        fetchDisposable = nil
+        retryTimer?.invalidate()
     }
 }
