@@ -25,7 +25,6 @@ final class MaiScreenSaverWindow: NSWindow {
         ignoresMouseEvents = true
         orderFront(nil)
 
-
         if let contentView = contentView {
             screenSaverView = MaiScreenSaverView(frame: contentView.bounds, isPreview: false)
             screenSaverView!.autoresizingMask = [.width, .height]

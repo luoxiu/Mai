@@ -25,7 +25,9 @@ final class VideoPlayer {
         EventBus.newVideo
             .bind { [weak self] (url) in
                 self?.opQueue.sync {
-                    self?.urls.insert(url, at: 0)
+                    if !EventBus.onlyLiked.value {
+                        self?.urls.insert(url, at: 0)
+                    }
                 }
             }
             .disposed(by: disposeBag)

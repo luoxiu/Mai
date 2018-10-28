@@ -38,6 +38,7 @@ final class VideoManager {
     private let ioQueue = DispatchQueue(label: UUID().uuidString)
     private let disposeBag = DisposeBag()
     private let reachability = Reachability(hostname: K.apiHost)
+    private var isFetchingEnabled = true
     private var fetchDisposable: Disposable?
     private weak var retryTimer: Timer?
 
@@ -194,17 +195,10 @@ final class VideoManager {
         }
     }
 
-    func fetchIfPossible() {
-        Logger.info("Fetch If Possible")
-        try? reachability?.startNotifier()
-        if fetchDisposable == nil && retryTimer == nil {
-            fetch()
-        }
-    }
-
     private func fetch() {
+        guard isFetchingEnabled else { return }
         Logger.info("Fetching...")
-        retryTimer?.invalidate()
+
         fetchDisposable = RxAlamofire
             .json(.get,
                   K.baseURL + "/rand/loop",
@@ -243,9 +237,19 @@ final class VideoManager {
             })
     }
 
+    func fetchIfPossible() {
+        Logger.info("Fetch If Possible")
+        try? reachability?.startNotifier()
+        isFetchingEnabled = true
+        if fetchDisposable == nil && retryTimer == nil {
+            fetch()
+        }
+    }
+
     func stopTryingFetching() {
         Logger.info("Stop Trying Fetching")
         reachability?.stopNotifier()
+        isFetchingEnabled = false
         fetchDisposable = nil
         retryTimer?.invalidate()
     }
