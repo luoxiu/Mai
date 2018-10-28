@@ -13,9 +13,7 @@ Mai is still under development, you can download the preview version [here](http
 
 Want to get involved? Great! Feel free to open an issue and tell me what you want!
 
-<p align="center">
-<img src="demo.gif" width="700">
-</p>
+<img src="demo.gif" width="918">
 
 ## Acknowledgements
 
