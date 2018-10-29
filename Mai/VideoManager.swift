@@ -16,24 +16,27 @@ import Cocoa
 import Reachability
 import RxReachability
 
-final class VideoManager {
-
+extension VideoManager {
+    
     private enum K {
         static let cacheSizeLimit = 100 * (1 << 20)  // 100 MB
-
+        
         static let id = "com.v2ambition.mai"
         static let cachePath = Path.userMovies + "Mai" + ".cache"
         static let likePath = Path.userMovies + "Mai" + "like"
         static let dislikePath = Path.userMovies + "Mai" + ".dislike"
-
+        
         static let apiHost = "animeloop.org"
         static let baseURL = "https://animeloop.org/api/v2"
-
+        
         static let ascending = { (lhs: Path, rhs: Path) -> Bool in
             guard let ld = lhs.creationDate, let rd = rhs.creationDate else { return true }
             return ld < rd
         }
     }
+}
+
+final class VideoManager {
 
     private let ioQueue = DispatchQueue(label: UUID().uuidString)
     private let disposeBag = DisposeBag()
@@ -42,6 +45,7 @@ final class VideoManager {
     private var fetchDisposable: Disposable?
     private weak var retryTimer: Timer?
 
+    // MARK: - Init
     private init() {
         createDirIfNeeded()
         copyDefaultVideo()
@@ -141,6 +145,7 @@ final class VideoManager {
         }
     }
 
+    // MARK: - Properties
     var allCachedVideo: [URL] {
         return ioQueue.sync {
             return K.cachePath
@@ -163,6 +168,7 @@ final class VideoManager {
         }
     }
 
+    // MARK: Like
     func like(_ url: URL) {
         ioQueue.sync {
             if let path = Path(url: url) {
@@ -195,6 +201,7 @@ final class VideoManager {
         }
     }
 
+    // MARK: Fetch
     private func fetch() {
         guard isFetchingEnabled else { return }
         Logger.info("Fetching...")
