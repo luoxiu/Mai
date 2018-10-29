@@ -11,13 +11,13 @@
 
 Mai is still under development, you can download the preview version [here](https://github.com/jianstm/Mai/releases) to try it out.
 
-Because I'm new to MAC development， there must be a lost of issues that I haven't noticed, feel free to open an issue and tell me what you think!
+Since I'm new to MAC development, there must be a lost of issues that I haven't noticed, feel free to open an issue and tell me what you think!
 
 ## Roadmap
 
 You can see the newest roadmap [here](https://github.com/jianstm/Mai/projects/2).
 
-Want to get involved in? Great! Any contributing is welcome at all times.
+Want to get involved? Awesome! Any contributing is welcome at all times!
 
 ## Previews
 
