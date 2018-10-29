@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1A981651CA403DFB1D17C080 /* Pods_Mai.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A091DEDE7CCE84021452F3C /* Pods_Mai.framework */; };
+		62BDE6692186B4B700925035 /* Queue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62BDE6682186B4B700925035 /* Queue.swift */; };
 		66D11CC921849E7900031474 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D11CC821849E7900031474 /* AppDelegate.swift */; };
 		66D11CCD21849E7A00031474 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 66D11CCC21849E7A00031474 /* Assets.xcassets */; };
 		66D11CD021849E7A00031474 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 66D11CCE21849E7A00031474 /* Main.storyboard */; };
@@ -23,6 +24,7 @@
 
 /* Begin PBXFileReference section */
 		350DA7BED8B4BEC9188B2D88 /* Pods-Mai.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mai.release.xcconfig"; path = "Target Support Files/Pods-Mai/Pods-Mai.release.xcconfig"; sourceTree = "<group>"; };
+		62BDE6682186B4B700925035 /* Queue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Queue.swift; sourceTree = "<group>"; };
 		66D11CC521849E7900031474 /* Mai.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Mai.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		66D11CC821849E7900031474 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		66D11CCC21849E7A00031474 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -104,6 +106,7 @@
 				66D11CDD21849F5E00031474 /* MaiScreenSaverWindow.swift */,
 				66D11CE72184B9B000031474 /* EventBus.swift */,
 				66F4621F2185ED1C00B11713 /* Extensions.swift */,
+				62BDE6682186B4B700925035 /* Queue.swift */,
 			);
 			path = Moe;
 			sourceTree = "<group>";
@@ -237,6 +240,7 @@
 				"${BUILT_PRODUCTS_DIR}/RxReachability/RxReachability.framework",
 				"${BUILT_PRODUCTS_DIR}/RxSwift/RxSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftyJSON/SwiftyJSON.framework",
+				"${BUILT_PRODUCTS_DIR}/Then/Then.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
@@ -250,6 +254,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxReachability.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyJSON.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Then.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -270,6 +275,7 @@
 				66D11CC921849E7900031474 /* AppDelegate.swift in Sources */,
 				66D11CDE21849F5E00031474 /* Logger.swift in Sources */,
 				66D11CDF21849F5E00031474 /* VideoManager.swift in Sources */,
+				62BDE6692186B4B700925035 /* Queue.swift in Sources */,
 				66D11CE221849F5E00031474 /* MaiScreenSaverWindow.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

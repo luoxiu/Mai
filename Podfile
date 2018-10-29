@@ -9,6 +9,7 @@ target 'Mai' do
   pod 'RxCocoa',    '~> 4.0'
   pod 'SwiftyJSON', '~> 4.0'
   pod 'FileKit', '~> 5.0.0'
+  pod 'Then'
   
   pod 'RxAlamofire'
   pod 'RxReachability'

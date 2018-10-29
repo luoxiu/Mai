@@ -8,6 +8,7 @@
 
 import Foundation
 import FileKit
+import Then
 
 struct Logger {
 
@@ -19,15 +20,14 @@ struct Logger {
         case cheer
     }
 
-    private static let formatter: DateFormatter = {
-        let f = DateFormatter()
-        f.timeStyle = .medium
-        return f
-    }()
-
     private static func log(file: String = #file, function: String = #function, line: UInt = #line, level: Level, _ items: [Any]) {
         runInDebug {
-            let time = formatter.string(from: Date())
+            
+            enum Cache {
+                static let formatter = DateFormatter().then { $0.timeStyle = .medium }
+            }
+            
+            let time = Cache.formatter.string(from: Date())
             var char = ""
             switch level {
             case .debug:    char = "🌀"

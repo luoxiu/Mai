@@ -15,6 +15,7 @@ PODS:
     - RxSwift (~> 4)
   - RxSwift (4.3.1)
   - SwiftyJSON (4.2.0)
+  - Then (2.4.0)
 
 DEPENDENCIES:
   - Alamofire (~> 4.7)
@@ -24,6 +25,7 @@ DEPENDENCIES:
   - RxReachability
   - RxSwift (~> 4.0)
   - SwiftyJSON (~> 4.0)
+  - Then
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
@@ -35,6 +37,7 @@ SPEC REPOS:
     - RxReachability
     - RxSwift
     - SwiftyJSON
+    - Then
 
 SPEC CHECKSUMS:
   Alamofire: c7287b6e5d7da964a70935e5db17046b7fde6568
@@ -45,7 +48,8 @@ SPEC CHECKSUMS:
   RxReachability: 2895f43994a5201f426967a50ea4259b637952f9
   RxSwift: fe0fd770a43acdb7d0a53da411c9b892e69bb6e4
   SwiftyJSON: c4bcba26dd9ec7a027fc8eade48e2c911f229e96
+  Then: 71866660c7af35a7343831f7668e7cd2b62ee0f2
 
-PODFILE CHECKSUM: c430d0b5ef4ab6e92df2ecce544f5c7044c0ebea
+PODFILE CHECKSUM: 9e38e4ea7d88718bdeeb96073d9226e0a265e093
 
 COCOAPODS: 1.6.0.beta.1
