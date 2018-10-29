@@ -8,35 +8,35 @@
 
 /* Begin PBXBuildFile section */
 		1A981651CA403DFB1D17C080 /* Pods_Mai.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A091DEDE7CCE84021452F3C /* Pods_Mai.framework */; };
+		62BDE6752186FCCF00925035 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62BDE6722186FCCF00925035 /* Logger.swift */; };
+		62BDE6762186FCCF00925035 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62BDE6732186FCCF00925035 /* Extensions.swift */; };
+		62BDE6772186FCCF00925035 /* EventBus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62BDE6742186FCCF00925035 /* EventBus.swift */; };
 		66D11CC921849E7900031474 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D11CC821849E7900031474 /* AppDelegate.swift */; };
 		66D11CCD21849E7A00031474 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 66D11CCC21849E7A00031474 /* Assets.xcassets */; };
 		66D11CD021849E7A00031474 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 66D11CCE21849E7A00031474 /* Main.storyboard */; };
-		66D11CDE21849F5E00031474 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D11CD921849F5E00031474 /* Logger.swift */; };
 		66D11CDF21849F5E00031474 /* VideoManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D11CDA21849F5E00031474 /* VideoManager.swift */; };
 		66D11CE021849F5E00031474 /* VideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D11CDB21849F5E00031474 /* VideoPlayer.swift */; };
 		66D11CE121849F5E00031474 /* MaiScreenSaverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D11CDC21849F5E00031474 /* MaiScreenSaverView.swift */; };
 		66D11CE221849F5E00031474 /* MaiScreenSaverWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D11CDD21849F5E00031474 /* MaiScreenSaverWindow.swift */; };
-		66D11CE82184B9B000031474 /* EventBus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D11CE72184B9B000031474 /* EventBus.swift */; };
 		66F4621E2185E26200B11713 /* 5bbadd3466e1f3205b7e4e98.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 66F4621D2185E26200B11713 /* 5bbadd3466e1f3205b7e4e98.mp4 */; };
-		66F462202185ED1C00B11713 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66F4621F2185ED1C00B11713 /* Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		350DA7BED8B4BEC9188B2D88 /* Pods-Mai.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mai.release.xcconfig"; path = "Target Support Files/Pods-Mai/Pods-Mai.release.xcconfig"; sourceTree = "<group>"; };
+		62BDE6722186FCCF00925035 /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
+		62BDE6732186FCCF00925035 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		62BDE6742186FCCF00925035 /* EventBus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventBus.swift; sourceTree = "<group>"; };
 		66D11CC521849E7900031474 /* Mai.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Mai.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		66D11CC821849E7900031474 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		66D11CCC21849E7A00031474 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		66D11CCF21849E7A00031474 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		66D11CD121849E7A00031474 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		66D11CD221849E7A00031474 /* Mai.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Mai.entitlements; sourceTree = "<group>"; };
-		66D11CD921849F5E00031474 /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Logger.swift; path = ../Utils/Logger.swift; sourceTree = "<group>"; };
 		66D11CDA21849F5E00031474 /* VideoManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoManager.swift; sourceTree = "<group>"; };
 		66D11CDB21849F5E00031474 /* VideoPlayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoPlayer.swift; sourceTree = "<group>"; };
 		66D11CDC21849F5E00031474 /* MaiScreenSaverView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MaiScreenSaverView.swift; sourceTree = "<group>"; };
 		66D11CDD21849F5E00031474 /* MaiScreenSaverWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MaiScreenSaverWindow.swift; sourceTree = "<group>"; };
-		66D11CE72184B9B000031474 /* EventBus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EventBus.swift; path = ../Utils/EventBus.swift; sourceTree = "<group>"; };
 		66F4621D2185E26200B11713 /* 5bbadd3466e1f3205b7e4e98.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = 5bbadd3466e1f3205b7e4e98.mp4; sourceTree = "<group>"; };
-		66F4621F2185ED1C00B11713 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Extensions.swift; path = ../Utils/Extensions.swift; sourceTree = "<group>"; };
 		71030D752014119B2973B576 /* Pods-Mai.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mai.debug.xcconfig"; path = "Target Support Files/Pods-Mai/Pods-Mai.debug.xcconfig"; sourceTree = "<group>"; };
 		9A091DEDE7CCE84021452F3C /* Pods_Mai.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Mai.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -62,17 +62,6 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
-		62BDE66C2186C6D200925035 /* Utils */ = {
-			isa = PBXGroup;
-			children = (
-				66D11CD921849F5E00031474 /* Logger.swift */,
-				66D11CE72184B9B000031474 /* EventBus.swift */,
-				66F4621F2185ED1C00B11713 /* Extensions.swift */,
-			);
-			name = Utils;
-			path = "New Group";
-			sourceTree = "<group>";
-		};
 		62BDE66D2186C6E800925035 /* Views */ = {
 			isa = PBXGroup;
 			children = (
@@ -81,6 +70,16 @@
 				66D11CDD21849F5E00031474 /* MaiScreenSaverWindow.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		62BDE6712186FCCF00925035 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				62BDE6722186FCCF00925035 /* Logger.swift */,
+				62BDE6732186FCCF00925035 /* Extensions.swift */,
+				62BDE6742186FCCF00925035 /* EventBus.swift */,
+			);
+			path = Utils;
 			sourceTree = "<group>";
 		};
 		66D11CBC21849E7900031474 = {
@@ -104,8 +103,8 @@
 		66D11CC721849E7900031474 /* Mai */ = {
 			isa = PBXGroup;
 			children = (
+				62BDE6712186FCCF00925035 /* Utils */,
 				62BDE66D2186C6E800925035 /* Views */,
-				62BDE66C2186C6D200925035 /* Utils */,
 				66F4621C2185E22300B11713 /* Resources */,
 				66D11CC821849E7900031474 /* AppDelegate.swift */,
 				66D11CDA21849F5E00031474 /* VideoManager.swift */,
@@ -274,14 +273,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				66D11CE82184B9B000031474 /* EventBus.swift in Sources */,
 				66D11CE021849F5E00031474 /* VideoPlayer.swift in Sources */,
+				62BDE6752186FCCF00925035 /* Logger.swift in Sources */,
 				66D11CE121849F5E00031474 /* MaiScreenSaverView.swift in Sources */,
-				66F462202185ED1C00B11713 /* Extensions.swift in Sources */,
 				66D11CC921849E7900031474 /* AppDelegate.swift in Sources */,
-				66D11CDE21849F5E00031474 /* Logger.swift in Sources */,
 				66D11CDF21849F5E00031474 /* VideoManager.swift in Sources */,
+				62BDE6772186FCCF00925035 /* EventBus.swift in Sources */,
 				66D11CE221849F5E00031474 /* MaiScreenSaverWindow.swift in Sources */,
+				62BDE6762186FCCF00925035 /* Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -428,6 +427,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_BUNDLE_IDENTIFIER = com.v2ambition.Mai;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -449,6 +449,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_BUNDLE_IDENTIFIER = com.v2ambition.Mai;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
