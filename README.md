@@ -9,11 +9,15 @@
 	<br>
 </div>
 
-Mai is currently under development, you can download the preview version [here](https://github.com/jianstm/Mai/releases) to try it out. 
+Mai is still under development, you can download the preview version [here](https://github.com/jianstm/Mai/releases) to try it out.
 
-I am new to macos developement and still learning, there must be some bugs i didn't notice, feel free to open an issue and tell me what you think! 
+Because I'm new to MAC development， there must be a lost of issues that I haven't noticed, feel free to open an issue and tell me what you think!
 
-Want to get involved? Great! You can discuss anything with me in my [discord server](https://discord.gg/bBRr2g).
+## Roadmap
+
+You can see the newest roadmap [here](https://github.com/jianstm/Mai/projects/2).
+
+Want to get involved in? Great! Any contributing is welcome at all times.
 
 ## Previews
 
