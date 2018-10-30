@@ -107,7 +107,7 @@ final class VideoPlayer {
     }
 
     private func play() {
-        if !DispatchQueue.isCurrent(opQueue) {
+        if !DispatchQueue.is(opQueue) {
             Logger.warn("Operation is not on opQueue, which may lead to an unpredictable consequence.")
         }
 

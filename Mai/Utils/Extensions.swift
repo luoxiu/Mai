@@ -8,16 +8,9 @@
 
 import Foundation
 
-func runInDebug(_ task: () -> Void) {
-    assert({
-        task()
-        return true
-    }(), "")
-}
-
 extension DispatchQueue {
 
-    static func isCurrent(_ queue: DispatchQueue) -> Bool {
+    static func `is`(_ queue: DispatchQueue) -> Bool {
         let key = DispatchSpecificKey<Void>()
 
         queue.setSpecific(key: key, value: ())

@@ -13,5 +13,6 @@ target 'Mai' do
   
   pod 'RxAlamofire'
   pod 'RxReachability'
+  pod 'NSObject+Rx'
 
 end

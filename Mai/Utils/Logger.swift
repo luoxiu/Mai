@@ -21,25 +21,25 @@ struct Logger {
     }
 
     private static func log(file: String = #file, function: String = #function, line: UInt = #line, level: Level, _ items: [Any]) {
-        runInDebug {
+        debugOnly {
             
             enum Cache {
-                static let formatter = DateFormatter().then { $0.timeStyle = .medium }
+                static let formatter = DateFormatter().then { $0.dateFormat = "HH:mm:ss.SSS" }
             }
-            
+
             let time = Cache.formatter.string(from: Date())
             var char = ""
             switch level {
-            case .debug:    char = "🌀"
-            case .warn:     char = "❗️"
-            case .info:     char = "💧"
-            case .error:     char = "❌"
-            case .cheer:     char = "🎉"
+            case .debug:        char = "🌀"
+            case .warn:         char = "❗️"
+            case .info:         char = "💧"
+            case .error:        char = "❌"
+            case .cheer:     	char = "🎉"
             }
             let msg = items.map({ "\($0)" }).joined(separator: ", ")
             let filename = Path(file).fileName.split(separator: ".").first!
-            
-            print("[\(time)] \(char) \(filename).\(function): \(msg)")
+
+            print("\(time) \(char) \(filename):\(line).\(function) ➜ \(msg)")
         }
     }
 

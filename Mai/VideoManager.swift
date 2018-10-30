@@ -20,16 +20,15 @@ extension VideoManager {
     
     private enum K {
         static let cacheSizeLimit = 100 * (1 << 20)  // 100 MB
-        
-        static let id = "com.v2ambition.mai"
-        static let cachePath = Path.userMovies + "Mai" + ".cache"
-        static let likePath = Path.userMovies + "Mai" + "like"
-        static let dislikePath = Path.userMovies + "Mai" + ".dislike"
+
+        static let cacheDir = Path.userMovies + "Mai" + ".cache"
+        static let likeDir = Path.userMovies + "Mai" + "like"
+        static let dislikeDir = Path.userMovies + "Mai" + ".dislike"
         
         static let apiHost = "animeloop.org"
         static let baseURL = "https://animeloop.org/api/v2"
         
-        static let ascending = { (lhs: Path, rhs: Path) -> Bool in
+        static let descendingByCreationDate = { (lhs: Path, rhs: Path) -> Bool in
             guard let ld = lhs.creationDate, let rd = rhs.creationDate else { return true }
             return ld < rd
         }
@@ -38,8 +37,8 @@ extension VideoManager {
 
 final class VideoManager {
 
-    private let ioQueue = DispatchQueue(label: UUID().uuidString)
     private let disposeBag = DisposeBag()
+    private let ioQueue = DispatchQueue(label: UUID().uuidString)
     private let reachability = Reachability(hostname: K.apiHost)
     private var isFetchingEnabled = true
     private var fetchDisposable: Disposable?
@@ -48,8 +47,8 @@ final class VideoManager {
     // MARK: - Init
     private init() {
         createDirIfNeeded()
-        copyDefaultVideo()
-        cleanCacheDirIfNeede()
+        copyDefaultVideoIfNeeded()
+        cleanCacheDirIfNeeded()
 
         reachability?.rx
             .status
@@ -84,7 +83,7 @@ final class VideoManager {
     static let shared = VideoManager()
 
     private func createDirIfNeeded() {
-        for p in [K.cachePath, K.likePath, K.dislikePath] {
+        for p in [K.cacheDir, K.likeDir, K.dislikeDir] {
             if !p.exists {
                 do {
                     try p.createDirectory()
@@ -95,10 +94,10 @@ final class VideoManager {
         }
     }
 
-    private func copyDefaultVideo() {
+    private func copyDefaultVideoIfNeeded() {
         if let path = Bundle.main.path(forResource: "5bbadd3466e1f3205b7e4e98", ofType: "mp4") {
             let from = Path(path)
-            let to = K.cachePath + from.fileName
+            let to = K.cacheDir + from.fileName
             if !to.exists {
                 do {
                     try from.moveFile(to: to)
@@ -109,19 +108,18 @@ final class VideoManager {
         }
     }
 
-    private func cleanCacheDirIfNeede() {
+    private func cleanCacheDirIfNeeded() {
         ioQueue.async {
-            var totalSize = K.cachePath.children().reduce(into: 0, { $0 += ($1.fileSize ?? 0) })
-            var files = K.cachePath.children()
+            var totalSize = K.cacheDir.children().reduce(into: 0, { $0 += ($1.fileSize ?? 0) })
+            var files = K.cacheDir.children()
                 .filter {
                     $0.pathExtension == "mp4"
                 }
-                .sorted(by: K.ascending)
-                .reversed()
+                .sorted(by: K.descendingByCreationDate)
                 .map({ $0 })
 
             var deleted: [Path] = []
-            while totalSize > (K.cacheSizeLimit / 3 * 2) {
+            while totalSize > K.cacheSizeLimit {
                 guard let path = files.popLast() else {
                     Logger.error("No file???")
                     preconditionFailure("No file???")
@@ -140,7 +138,7 @@ final class VideoManager {
                 Logger.cheer("Cache dir has been cleaned", deleted)
             }
             DispatchQueue.global().asyncAfter(deadline: .now() + 15) { [weak self] in
-                self?.cleanCacheDirIfNeede()
+                self?.cleanCacheDirIfNeeded()
             }
         }
     }
@@ -148,22 +146,20 @@ final class VideoManager {
     // MARK: - Properties
     var allCachedVideo: [URL] {
         return ioQueue.sync {
-            return K.cachePath
+            return K.cacheDir
                 .children()
                 .filter({ $0.pathExtension == "mp4" })
-                .sorted(by: K.ascending)
-                .reversed()
+                .sorted(by: K.descendingByCreationDate)
                 .map({ $0.url })
         }
     }
 
     var allLikedVideos: [URL] {
         return ioQueue.sync {
-            return K.likePath
+            return K.likeDir
                 .children()
                 .filter({ $0.pathExtension == "mp4" })
-                .sorted(by: K.ascending)
-                .reversed()
+                .sorted(by: K.descendingByCreationDate)
                 .map({ $0.url })
         }
     }
@@ -172,10 +168,10 @@ final class VideoManager {
     func like(_ url: URL) {
         ioQueue.sync {
             if let path = Path(url: url) {
-                let dest = K.likePath + path.fileName
+                let dest = K.likeDir + path.fileName
                 guard !dest.exists else { return }
                 do {
-                    Logger.info("Copy the video to like path", dest)
+                    Logger.info("Copy the video to like dir", dest)
                     try path.copyFile(to: dest)
                 } catch let err {
                     Logger.error("Failed to move file to like dir", dest, err)
@@ -187,12 +183,17 @@ final class VideoManager {
     func dislike(_ url: URL) {
         ioQueue.sync {
             if let path = Path(url: url), path.exists {
-                let dest = K.dislikePath + path.fileName
+                let dest = K.dislikeDir + path.fileName
                 if dest.exists {
-                    try? dest.deleteFile()
+                    do {
+                        try path.deleteFile()
+                    } catch let err {
+                        Logger.error("Failed to delete file", path, err)
+                    }
+                    return
                 }
                 do {
-                    Logger.info("Move the video to dislike path", dest)
+                    Logger.info("Move the video to dislike dir", dest)
                     try path.moveFile(to: dest)
                 } catch let err {
                     Logger.error("Failed to move file to dislike dir", dest, err)
@@ -219,7 +220,7 @@ final class VideoManager {
             }
             .subscribe(onNext: { [weak self] (url, data) in
                 let fileName = Path(url).fileName
-                let dest = K.cachePath + fileName
+                let dest = K.cacheDir + fileName
                 do {
                     try self?.ioQueue.sync {
                         if dest.exists {

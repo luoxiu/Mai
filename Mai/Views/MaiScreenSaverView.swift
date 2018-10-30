@@ -11,10 +11,10 @@ import Cocoa
 import AVFoundation
 import ScreenSaver
 import FileKit
+import NSObject_Rx
 
 class MaiScreenSaverView: ScreenSaverView {
 
-    private let disposeBag = DisposeBag()
     private var videoPlayer: VideoPlayer!
 
     override init?(frame: NSRect, isPreview: Bool) {
@@ -39,22 +39,22 @@ class MaiScreenSaverView: ScreenSaverView {
         layer.addSublayer(shadowLayer)
 
         EventBus.isShadowed
-            .bind { (flag) in
-                shadowLayer.isHidden = !flag
+            .bind { (isShadowed) in
+                shadowLayer.isHidden = !isShadowed
             }
-            .disposed(by: disposeBag)
+            .disposed(by: rx.disposeBag)
 
         EventBus.isMuted
-            .bind { (flag) in
-                player.isMuted = flag
+            .bind { isMuted in
+                player.isMuted = isMuted
             }
-            .disposed(by: disposeBag)
+            .disposed(by: rx.disposeBag)
 
         EventBus.volume
             .bind { value in
                 player.volume = value
             }
-            .disposed(by: disposeBag)
+            .disposed(by: rx.disposeBag)
     }
 
     required init?(coder: NSCoder) {

@@ -23,11 +23,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         VideoManager.shared.fetchIfPossible()
     }
 
-    var disposeBag = DisposeBag()
-
-    func applicationWillTerminate(_ notification: Notification) {
-    }
-
     func reloadWindows() {
         windows.forEach { $0.close() }
         windows = NSScreen.screens.map { windowWithSaverView(on: $0) }
@@ -38,25 +33,33 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 }
 
-// MARK: NSMenu
+// MARK: Menu Item
 extension AppDelegate {
 
     func setupStatusItem() {
-        statusItem.button?.image = NSImage(named:NSImage.Name("StatusBarButtonImage"))
+        statusItem.button?.image = NSImage(named: "StatusBarButtonImage")
+
         let menu = NSMenu()
 
         menu.addItem(NSMenuItem(title: "About", action: #selector(AppDelegate.aboutDidtap(_:)), keyEquivalent: ""))
         menu.addItem(NSMenuItem(title: "Check for Updates...", action: #selector(AppDelegate.checkForUpdatesDidTap(_:)), keyEquivalent: ""))
+
         menu.addItem(NSMenuItem.separator())
+
         let shadow = NSMenuItem(title: "Shadow", action: #selector(AppDelegate.shadowDidTap(_:)), keyEquivalent: "")
         shadow.state = .on
         menu.addItem(shadow)
+
         menu.addItem(NSMenuItem(title: "Only Liked", action: #selector(AppDelegate.onlyLikedDidTap(_:)), keyEquivalent: ""))
+
         menu.addItem(NSMenuItem.separator())
-        menu.addItem(NSMenuItem(title: "Next", action: #selector(AppDelegate.nextDidTap(_:)), keyEquivalent: "N"))
-        menu.addItem(NSMenuItem(title: "Like", action: #selector(AppDelegate.likeDidTap(_:)), keyEquivalent: "L"))
-        menu.addItem(NSMenuItem(title: "Dislike", action: #selector(AppDelegate.dislikeDidTap(_:)), keyEquivalent: "D"))
+
+        menu.addItem(NSMenuItem(title: "Next", action: #selector(AppDelegate.nextDidTap(_:)), keyEquivalent: "n"))
+        menu.addItem(NSMenuItem(title: "Like", action: #selector(AppDelegate.likeDidTap(_:)), keyEquivalent: "l"))
+        menu.addItem(NSMenuItem(title: "Dislike", action: #selector(AppDelegate.dislikeDidTap(_:)), keyEquivalent: "d"))
+
         menu.addItem(NSMenuItem.separator())
+
         menu.addItem(NSMenuItem(title: "Quit", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "Q"))
 
         statusItem.menu = menu
