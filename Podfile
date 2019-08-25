@@ -4,14 +4,21 @@ inhibit_all_warnings!
 target 'Mai' do
   use_frameworks!
   
-  pod 'Alamofire', '~> 4.7'
-  pod 'RxSwift',    '~> 4.0'
-  pod 'RxCocoa',    '~> 4.0'
-  pod 'SwiftyJSON', '~> 4.0'
-  pod 'FileKit', '~> 5.0.0'
-  pod 'Then'
-  
+  # network
+  pod 'Alamofire'
   pod 'RxAlamofire'
+  
+  # data
+  pod 'SwiftyJSON'
+  
+  # utility
+  pod 'FileKit'
+  pod 'Then'
   pod 'NSObject+Rx'
+
+  # architecture
+  pod 'RxSwift'
+  pod 'RxCocoa'
+  pod 'ReSwift'
 
 end

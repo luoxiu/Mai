@@ -18,7 +18,6 @@ enum EventBus {
     
     // MARK: Player Settings
     static let isShadowed = BehaviorRelay<Bool>(value: true)
-    static let volume = BehaviorRelay<Float>(value: 0)
     
     // MARK: Control Flows
     static let isStopped = BehaviorRelay<Bool>(value: false)

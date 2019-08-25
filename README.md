@@ -1,4 +1,4 @@
-# Mai
+# Mai(Refactoring)
 
 <div align="center">
 	<img src="icon.png" width="128" height="128">

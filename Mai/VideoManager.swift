@@ -23,7 +23,7 @@ extension VideoManager {
         static let likeDir = Path.userMovies + "Mai" + "like"
         static let dislikeDir = Path.userMovies + "Mai" + ".dislike"
         
-        static let downloadInterval: TimeInterval = 5
+        static let downloadIntervalrea = 10
         
         static let apiHost = "animeloop.org"
         static let baseURL = "https://animeloop.org/api/v2"
@@ -35,22 +35,13 @@ extension VideoManager {
     }
 }
 
-extension VideoManager {
- 
-    var async: Observable<VideoManager> {
-        return Observable.just(self).observeOn(ConcurrentDispatchQueueScheduler(qos: .userInitiated))
-    }
-}
-
 final class VideoManager {
 
     private let disposeBag = DisposeBag()
     private let ioQueue = DispatchQueue(label: UUID().uuidString)
     private let reachability = NetworkReachabilityManager(host: K.apiHost)!
     
-    private var cacheTotalSize: UInt64 = 0
-    
-    private var fetchDisposable: Disposable?
+    private var downloadDisposable: Disposable?
 
     // MARK: - Init
     private init() {
@@ -59,66 +50,58 @@ final class VideoManager {
         cleanCacheDirIfNeeded()
         
         reachability.startListening()
-
-        EventBus.onlyLiked
-            .bind { [weak self] flag in
-                guard let self = self else { return }
-                if flag {
-                    self.stopFetching()
-                } else {
-                    self.startFetching()
-                }
-            }
-            .disposed(by: disposeBag)
     }
 
     static let shared = VideoManager()
 
     private func createDirIfNeeded() {
-        for p in [K.cacheDir, K.likeDir, K.dislikeDir] {
-            if p.exists { continue }
-            
-            do {
-                try p.createDirectory()
-            } catch let err {
-                Logger.error("Failed to create directory", p, err)
+        ioQueue.async {
+            for p in [K.cacheDir, K.likeDir, K.dislikeDir] {
+                if p.exists { continue }
+                
+                do {
+                    try p.createDirectory()
+                } catch let err {
+                    Logger.error("Failed to create directory", p, err)
+                }
             }
         }
     }
 
     private func copyDefaultVideoIfNeeded() {
-        if let path = Bundle.main.path(forResource: "5bbadd3466e1f3205b7e4e98", ofType: "mp4") {
-            let from = Path(path)
-            let to = K.cacheDir + from.fileName
-            if to.exists { return }
-            
-            do {
-                try from.moveFile(to: to)
-            } catch let err {
-                Logger.error("Failed to copy default video", err)
+        ioQueue.async {
+            if let path = Bundle.main.path(forResource: "5bbadd3466e1f3205b7e4e98", ofType: "mp4") {
+                let from = Path(path)
+                let to = K.cacheDir + from.fileName
+                if to.exists { return }
+                
+                do {
+                    try from.moveFile(to: to)
+                } catch let err {
+                    Logger.error("Failed to copy default video", err)
+                }
             }
         }
     }
 
     private func cleanCacheDirIfNeeded() {
-        ioQueue.async { [weak self] in
-            guard let self = self else { return }
-            self.cacheTotalSize = K.cacheDir.children().reduce(into: 0, { $0 += ($1.fileSize ?? 0) })
+        ioQueue.async {
+            var cacheTotalSize = K.cacheDir.children().reduce(into: 0, { $0 += ($1.fileSize ?? 0) })
             var files = K.cacheDir.children()
                 .filter {
                     $0.pathExtension == "mp4"
                 }
                 .sorted(by: K.descendingByCreationDate)
 
-            while self.cacheTotalSize > K.cacheSizeLimit {
+            while cacheTotalSize > K.cacheSizeLimit, files.count > 0 {
                 guard let path = files.popLast() else {
-                    Logger.error("Cache folder size is \(self.cacheTotalSize) but no mp4 file???")
+                    Logger.error("Cache folder size is \(cacheTotalSize) but no mp4 file???")
                     return
                 }
                 
                 do {
                     guard let fileSize = path.fileSize else { continue }
-                    self.cacheTotalSize -= fileSize
+                    cacheTotalSize -= fileSize
                     try path.deleteFile()
                 } catch let err {
                     Logger.error("Failed to delete file", path, err)
@@ -128,6 +111,40 @@ final class VideoManager {
     }
 
     // MARK: - All videos
+    func videos(in dir: Path, sorted: Bool = false) -> Observable<[URL]> {
+        return .create { (o) -> Disposable in
+            let d = BooleanDisposable(isDisposed: false)
+            
+            self.ioQueue.async {
+                var videos = dir.children()
+                    .filter { $0.pathExtension == "mp4" }
+                if sorted {
+                    videos.sort(by: K.descendingByCreationDate)
+                }
+                
+                let urls = videos.map { $0.url }
+                DispatchQueue.main.async {
+                    if d.isDisposed {
+                        return
+                    }
+                    o.onNext(urls)
+                }
+            }
+            
+            return d
+        }
+    }
+    
+    private var shouldDownload: Bool {
+        guard self.reachability.isReachable else {
+            return false
+        }
+        if EventBus.isStopped.value || EventBus.isRepeated.value || EventBus.onlyLiked.value {
+            return false
+        }
+        return true
+    }
+    
     var allCachedVideos: [URL] {
         return ioQueue.sync {
             return K.cacheDir
@@ -183,7 +200,6 @@ final class VideoManager {
             
             do {
                 try path.moveFile(to: dest)
-                self.cacheTotalSize -= dest.fileSize ?? 0
             } catch let err {
                 Logger.error("Failed to move file to dislike dir", dest, err)
             }
@@ -191,12 +207,11 @@ final class VideoManager {
     }
 
     // MARK: Download
-    private func fetch() {
-        fetchDisposable?.dispose()
-        fetchDisposable = Observable<Int>.timer(0, period: K.downloadInterval, scheduler: MainScheduler.asyncInstance)
+    private func download() {
+        downloadDisposable?.dispose()
+        downloadDisposable = Observable<Int>.timer(DispatchTimeInterval.seconds(0), period: DispatchTimeInterval.seconds(K.downloadInterval), scheduler: MainScheduler.asyncInstance)
             .flatMapLatest({ (_) -> Observable<Void> in
-                
-                guard self.reachability.isReachable else {
+                guard self.shouldDownload else {
                     return .empty()
                 }
                 
@@ -209,64 +224,79 @@ final class VideoManager {
                         guard
                             let path = JSON(obj)["data"][0]["files"]["mp4_1080p"].string,
                             let url = URL(string: path)
-                            else {
-                                return Observable.empty()
-                        }
-                        
-                        if (self.allCachedVideos + self.allDislikedVideos).contains(where: { $0.lastPathComponent == url.lastPathComponent }) {
+                        else {
+                            Logger.error("Bad response", JSON(obj))
                             return Observable.empty()
                         }
-                        
-                        return Observable<Void>.create({ (o) -> Disposable in
-                            let request = Alamofire.download(url)
-                            request.response(completionHandler: { (res) in
-                                if let err = res.error {
-                                    o.onError(err)
-                                    return
-                                }
-                                guard let url = res.temporaryURL else {
-                                    return
+                        return Observable.zip([self.videos(in: K.cacheDir), self.videos(in: K.dislikeDir)]) { (urls) -> [URL] in
+                                urls.flatMap { $0 }
+                            }
+                            .flatMap({ (urls) -> Observable<Void> in
+                                if urls.contains(url) {
+                                    return .empty()
                                 }
                                 
-                                self.ioQueue.async {
-                                    let tmpPath = Path(url: url)!
-                                    let fileName = tmpPath.fileName
-                                    let dest = K.cacheDir + fileName
+                                return Observable<Void>.create({ (o) -> Disposable in
+                                    let d = BooleanDisposable(isDisposed: false)
                                     
-                                    if dest.exists { return }
+                                    let request = Alamofire.download(url, to: DownloadRequest.suggestedDownloadDestination())
+                                    request.response(completionHandler: { (res) in
+                                        if let err = res.error {
+                                            o.onError(err)
+                                            return
+                                        }
+                                        guard let destURL = res.destinationURL else {
+                                            return
+                                        }
+                                        
+                                        self.ioQueue.async {
+                                            if d.isDisposed {
+                                                return
+                                            }
+                                            
+                                            let destPath = Path(url: destURL)!
+                                            let fileName = destPath.fileName
+                                            let newDestPath = K.cacheDir + fileName
+                                            
+                                            if newDestPath.exists { return }
+                                            
+                                            do {
+                                                try destPath.moveFile(to: newDestPath)
+                                            } catch let e {
+                                                Logger.error("Failed to download video", e)
+                                            }
+                                            DispatchQueue.main.async {
+                                                EventBus.newVideo.accept(destURL)
+                                            }
+                                        }
+                                    })
                                     
-                                    do {
-                                        try tmpPath.moveFile(to: dest)
-                                        self.cacheTotalSize += dest.fileSize ?? 0
-                                    } catch let e {
-                                        Logger.error("Failed to download video", e)
+                                    return Disposables.create {
+                                        d.dispose()
+                                        request.cancel()
                                     }
-                                    DispatchQueue.main.async {
-                                        EventBus.newVideo.accept(url)
-                                    }
-                                }
-                            })
-                            
-                            return Disposables.create {
-                                request.cancel()
-                            }
-                        })
-                    }
+                                })
+                    })
+                }
+                
             })
             .subscribe(onNext: { _ in
             }, onError: { (err) in
+                if let e = err as? URLError, e.code == .cancelled {
+                    return
+                }
                 Logger.error("Failed to download video", err)
             })
     }
 
-    func startFetching() {
-        if fetchDisposable == nil {
-            fetch()
+    func startDownloading() {
+        if downloadDisposable == nil {
+            download()
         }
     }
 
-    func stopFetching() {
-        fetchDisposable?.dispose()
-        fetchDisposable = nil
+    func stopDownloading() {
+        downloadDisposable?.dispose()
+        downloadDisposable = nil
     }
 }

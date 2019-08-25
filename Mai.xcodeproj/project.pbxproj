@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		660EC1FF231238F600CCC305 /* Queue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660EC1FE231238F600CCC305 /* Queue.swift */; };
+		660EC2012312CBD200CCC305 /* State.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660EC2002312CBD200CCC305 /* State.swift */; };
 		6650F36A23117E230029FCED /* DispatchQueue+Mai.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6650F36923117E230029FCED /* DispatchQueue+Mai.swift */; };
 		6650F36E231183EE0029FCED /* BehaviorRelay+Mai.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6650F36D231183EE0029FCED /* BehaviorRelay+Mai.swift */; };
 		6650F370231184230029FCED /* NSMenuItem+Mai.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6650F36F231184230029FCED /* NSMenuItem+Mai.swift */; };
@@ -26,6 +27,7 @@
 
 /* Begin PBXFileReference section */
 		660EC1FE231238F600CCC305 /* Queue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Queue.swift; sourceTree = "<group>"; };
+		660EC2002312CBD200CCC305 /* State.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = State.swift; sourceTree = "<group>"; };
 		6650F36923117E230029FCED /* DispatchQueue+Mai.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DispatchQueue+Mai.swift"; sourceTree = "<group>"; };
 		6650F36D231183EE0029FCED /* BehaviorRelay+Mai.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BehaviorRelay+Mai.swift"; sourceTree = "<group>"; };
 		6650F36F231184230029FCED /* NSMenuItem+Mai.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSMenuItem+Mai.swift"; sourceTree = "<group>"; };
@@ -108,6 +110,7 @@
 				66F46238218886E300B11713 /* Main.storyboard */,
 				66F4623B218886E300B11713 /* Info.plist */,
 				66F4623C218886E300B11713 /* Mai.entitlements */,
+				660EC2002312CBD200CCC305 /* State.swift */,
 			);
 			path = Mai;
 			sourceTree = "<group>";
@@ -281,6 +284,7 @@
 				6650F370231184230029FCED /* NSMenuItem+Mai.swift in Sources */,
 				6650F36A23117E230029FCED /* DispatchQueue+Mai.swift in Sources */,
 				66F46233218886E200B11713 /* AppDelegate.swift in Sources */,
+				660EC2012312CBD200CCC305 /* State.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

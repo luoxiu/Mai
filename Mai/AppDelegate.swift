@@ -21,7 +21,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         self.setupStatusItem()
         self.reloadWindows()
         
-        VideoManager.shared.startFetching()
+//        VideoManager.shared.startDownloading()
     }
 
     func reloadWindows() {
@@ -53,25 +53,25 @@ extension AppDelegate {
 
         menu.addItem(NSMenuItem.separator())
 
-        let stopItem = NSMenuItem(title: "Stop", action: #selector(AppDelegate.stopDidTap(_:)), keyEquivalent: "s")
+        let stopItem = NSMenuItem(title: "Stop", action: #selector(AppDelegate.stopDidTap(_:)), keyEquivalent: "")
         menu.addItem(stopItem)
         EventBus.isStopped.bind(to: stopItem.rx.state).disposed(by: rx.disposeBag)
         
-        let repeatItem = NSMenuItem(title: "Repeat", action: #selector(AppDelegate.dislikeDidTap(_:)), keyEquivalent: "r")
+        let repeatItem = NSMenuItem(title: "Repeat", action: #selector(AppDelegate.repeatDidTap(_:)), keyEquivalent: "")
         menu.addItem(repeatItem)
-        EventBus.isStopped.bind(to: repeatItem.rx.state).disposed(by: rx.disposeBag)
+        EventBus.isRepeated.bind(to: repeatItem.rx.state).disposed(by: rx.disposeBag)
         
         let onlyLikedItem = NSMenuItem(title: "Only Liked", action: #selector(AppDelegate.onlyLikedDidTap(_:)), keyEquivalent: "")
         menu.addItem(onlyLikedItem)
         EventBus.onlyLiked.bind(to: onlyLikedItem.rx.state).disposed(by: rx.disposeBag)
         
-        menu.addItem(NSMenuItem(title: "Next", action: #selector(AppDelegate.nextDidTap(_:)), keyEquivalent: "n"))
-        menu.addItem(NSMenuItem(title: "Like", action: #selector(AppDelegate.likeDidTap(_:)), keyEquivalent: "l"))
-        menu.addItem(NSMenuItem(title: "Dislike", action: #selector(AppDelegate.dislikeDidTap(_:)), keyEquivalent: "d"))
+        menu.addItem(NSMenuItem(title: "Next", action: #selector(AppDelegate.nextDidTap(_:)), keyEquivalent: ""))
+        menu.addItem(NSMenuItem(title: "Like", action: #selector(AppDelegate.likeDidTap(_:)), keyEquivalent: ""))
+        menu.addItem(NSMenuItem(title: "Dislike", action: #selector(AppDelegate.dislikeDidTap(_:)), keyEquivalent: ""))
         
         menu.addItem(NSMenuItem.separator())
 
-        menu.addItem(NSMenuItem(title: "Quit", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "Q"))
+        menu.addItem(NSMenuItem(title: "Quit", action: #selector(NSApplication.terminate(_:)), keyEquivalent: ""))
 
         statusItem.menu = menu
     }
@@ -87,6 +87,9 @@ extension AppDelegate {
     }
     
     @objc func repeatDidTap(_ item: NSMenuItem) {
+        if EventBus.isStopped.value {
+            EventBus.isStopped.toggle()
+        }
         EventBus.isRepeated.toggle()
     }
     

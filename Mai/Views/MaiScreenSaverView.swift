@@ -16,6 +16,7 @@ import NSObject_Rx
 class MaiScreenSaverView: ScreenSaverView {
     
     private let opQueue = DispatchQueue(label: UUID().uuidString)
+    private let player = AVPlayer()
     
     private var currentPlayList: Queue<URL> = Queue()
     private var currentPlay: URL?
@@ -26,66 +27,20 @@ class MaiScreenSaverView: ScreenSaverView {
         self.wantsLayer = true
         guard let layer = self.layer else { return }
 
-        let player = AVPlayer()
         let playerLayer = AVPlayerLayer(player: player)
         playerLayer.autoresizingMask = [ .layerWidthSizable, .layerHeightSizable]
         playerLayer.frame = bounds
         playerLayer.videoGravity = .resizeAspectFill
         layer.addSublayer(playerLayer)
         
-        func play() {
-            self.opQueue.async {
-                guard let url = self.currentPlayList.popFirst() else { return }
-                self.currentPlayList.append(url)
-                self.currentPlay = url
-            
-                DispatchQueue.main.async {
-                    let item = AVPlayerItem(url: url)
-                    player.replaceCurrentItem(with: item)
-                    player.actionAtItemEnd = .none
-                    player.play()
-                }
-            }
-        }
-        
-        NotificationCenter.default.addObserver(
-            forName: .AVPlayerItemDidPlayToEndTime,
-            object: nil,
-            queue: .main
-        ) { n in
-            
-            if EventBus.isRepeated.value {
-                (n.object as? AVPlayerItem)?.seek(to: .zero)
-            } else {
-                play()
-            }
-        }
+        self.setupLoop()
 
         // MARK: Player Settings
-        let shadowLayer = CALayer()
-        shadowLayer.backgroundColor = NSColor.black.withAlphaComponent(0.6).cgColor
-        shadowLayer.autoresizingMask = [ .layerWidthSizable, .layerHeightSizable]
-        shadowLayer.frame = bounds
-        layer.addSublayer(shadowLayer)
-
-        EventBus.isShadowed
-            .bind { (shadow) in
-                shadowLayer.isHidden = !shadow
-            }
-            .disposed(by: rx.disposeBag)
-
-        EventBus.volume
-            .bind { value in
-                player.volume = value
-            }
-            .disposed(by: rx.disposeBag)
+        self.setupShadow()
         
-        // MARK: Control Flows
-        EventBus.isStopped
-            .bind { stopped in
-                stopped ? player.pause() : player.play()
-            }
-            .disposed(by: rx.disposeBag)
+        // MARK: Controls
+        self.setupStop()
+        self.setupRepeat()
         
         EventBus.onlyLiked
             .bind { [weak self] onlyLiked in
@@ -97,6 +52,7 @@ class MaiScreenSaverView: ScreenSaverView {
                         self.opQueue.sync {
                             self.currentPlayList = Queue()
                             self.currentPlayList.append(contentsOf: urls)
+                            self.play()
                         }
                     }
                 } else {
@@ -105,7 +61,7 @@ class MaiScreenSaverView: ScreenSaverView {
                         self.opQueue.async {
                             self.currentPlayList = Queue()
                             self.currentPlayList.append(contentsOf: urls)
-                            play()
+                            self.play()
                         }
                     }
                 }
@@ -126,8 +82,8 @@ class MaiScreenSaverView: ScreenSaverView {
         
     
         EventBus.next
-            .bind {
-                play()
+            .bind { [weak self] in
+                self?.play()
             }
             .disposed(by: rx.disposeBag)
         
@@ -149,14 +105,79 @@ class MaiScreenSaverView: ScreenSaverView {
                     if let url = self.currentPlay {
                         VideoManager.shared.dislike(url)
                         _ = self.currentPlayList.popLast()
-                        play()
+                        self.play()
                     }
                 }
             }
             .disposed(by: rx.disposeBag)
         
         self.currentPlayList.append(contentsOf: VideoManager.shared.allCachedVideos)
-        play()
+        self.play()
+    }
+    
+    private func play() {
+        self.opQueue.async {
+            guard let url = self.currentPlayList.popFirst() else { return }
+            self.currentPlayList.append(url)
+            self.currentPlay = url
+            
+            DispatchQueue.main.async {
+                let item = AVPlayerItem(url: url)
+                self.player.replaceCurrentItem(with: item)
+                self.player.actionAtItemEnd = .none
+                self.player.play()
+            }
+        }
+    }
+    
+    private func setupLoop() {
+        NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: nil, queue: .main) { [weak self] n in
+            guard let self = self else { return }
+            if EventBus.isRepeated.value {
+                (n.object as? AVPlayerItem)?.seek(to: .zero)
+            } else {
+                self.play()
+            }
+        }
+        
+        NotificationCenter.default.addObserver(forName: .AVPlayerItemFailedToPlayToEndTime, object: nil, queue: .main) { [weak self] n in
+            guard let self = self else { return }
+            if EventBus.isRepeated.value {
+                (n.object as? AVPlayerItem)?.seek(to: .zero)
+            } else {
+                self.play()
+            }
+        }
+    }
+    
+    // MARK: Player Settings
+    private func setupShadow() {
+        guard let layer = self.layer else { return }
+        let shadowLayer = CALayer()
+        shadowLayer.backgroundColor = NSColor.black.withAlphaComponent(0.6).cgColor
+        shadowLayer.autoresizingMask = [ .layerWidthSizable, .layerHeightSizable]
+        shadowLayer.frame = bounds
+        layer.addSublayer(shadowLayer)
+        
+        EventBus.isShadowed
+            .bind { (shadow) in
+                shadowLayer.isHidden = !shadow
+            }
+            .disposed(by: rx.disposeBag)
+    }
+    
+    
+    // MARK: Controls
+    private func setupStop() {
+        EventBus.isStopped
+            .bind { [weak self] stopped in
+                guard let self = self else { return }
+                stopped ? self.player.pause() : self.player.play()
+            }
+            .disposed(by: rx.disposeBag)
+    }
+    
+    private func setupRepeat() {
     }
 
     required init?(coder: NSCoder) {
