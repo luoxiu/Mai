@@ -7,12 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6650F36A23117E230029FCED /* DispatchQueue+Mai.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6650F36923117E230029FCED /* DispatchQueue+Mai.swift */; };
+		6650F36E231183EE0029FCED /* BehaviorRelay+Mai.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6650F36D231183EE0029FCED /* BehaviorRelay+Mai.swift */; };
+		6650F370231184230029FCED /* NSMenuItem+Mai.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6650F36F231184230029FCED /* NSMenuItem+Mai.swift */; };
 		66F46233218886E200B11713 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66F46232218886E200B11713 /* AppDelegate.swift */; };
 		66F46237218886E300B11713 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 66F46236218886E300B11713 /* Assets.xcassets */; };
 		66F4623A218886E300B11713 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 66F46238218886E300B11713 /* Main.storyboard */; };
 		66F4624C2188874C00B11713 /* 5bbadd3466e1f3205b7e4e98.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 66F462432188874C00B11713 /* 5bbadd3466e1f3205b7e4e98.mp4 */; };
 		66F4624D2188874C00B11713 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66F462452188874C00B11713 /* Logger.swift */; };
-		66F4624E2188874C00B11713 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66F462462188874C00B11713 /* Extensions.swift */; };
 		66F4624F2188874C00B11713 /* EventBus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66F462472188874C00B11713 /* EventBus.swift */; };
 		66F462502188874C00B11713 /* VideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66F462492188874C00B11713 /* VideoPlayer.swift */; };
 		66F462512188874C00B11713 /* MaiScreenSaverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66F4624A2188874C00B11713 /* MaiScreenSaverView.swift */; };
@@ -23,6 +25,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		6650F36923117E230029FCED /* DispatchQueue+Mai.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DispatchQueue+Mai.swift"; sourceTree = "<group>"; };
+		6650F36D231183EE0029FCED /* BehaviorRelay+Mai.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BehaviorRelay+Mai.swift"; sourceTree = "<group>"; };
+		6650F36F231184230029FCED /* NSMenuItem+Mai.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSMenuItem+Mai.swift"; sourceTree = "<group>"; };
 		66F4622F218886E200B11713 /* Mai.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Mai.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		66F46232218886E200B11713 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		66F46236218886E300B11713 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -31,7 +36,6 @@
 		66F4623C218886E300B11713 /* Mai.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Mai.entitlements; sourceTree = "<group>"; };
 		66F462432188874C00B11713 /* 5bbadd3466e1f3205b7e4e98.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = 5bbadd3466e1f3205b7e4e98.mp4; sourceTree = "<group>"; };
 		66F462452188874C00B11713 /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
-		66F462462188874C00B11713 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		66F462472188874C00B11713 /* EventBus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventBus.swift; sourceTree = "<group>"; };
 		66F462492188874C00B11713 /* VideoPlayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoPlayer.swift; sourceTree = "<group>"; };
 		66F4624A2188874C00B11713 /* MaiScreenSaverView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MaiScreenSaverView.swift; sourceTree = "<group>"; };
@@ -62,6 +66,16 @@
 				7376889835A8DC00D082FDFF /* Pods-Mai.release.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		6650F36823117E0F0029FCED /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				6650F36923117E230029FCED /* DispatchQueue+Mai.swift */,
+				6650F36D231183EE0029FCED /* BehaviorRelay+Mai.swift */,
+				6650F36F231184230029FCED /* NSMenuItem+Mai.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 		66F46226218886E200B11713 = {
@@ -109,8 +123,8 @@
 		66F462442188874C00B11713 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				6650F36823117E0F0029FCED /* Extensions */,
 				66F462452188874C00B11713 /* Logger.swift */,
-				66F462462188874C00B11713 /* Extensions.swift */,
 				66F462472188874C00B11713 /* EventBus.swift */,
 				66F4625521888A0D00B11713 /* fn.swift */,
 			);
@@ -279,14 +293,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				66F4624F2188874C00B11713 /* EventBus.swift in Sources */,
+				6650F36E231183EE0029FCED /* BehaviorRelay+Mai.swift in Sources */,
 				66F462542188875F00B11713 /* VideoManager.swift in Sources */,
 				66F462502188874C00B11713 /* VideoPlayer.swift in Sources */,
 				66F462512188874C00B11713 /* MaiScreenSaverView.swift in Sources */,
 				66F4625621888A0D00B11713 /* fn.swift in Sources */,
 				66F4624D2188874C00B11713 /* Logger.swift in Sources */,
 				66F462522188874C00B11713 /* MaiScreenSaverWindow.swift in Sources */,
+				6650F370231184230029FCED /* NSMenuItem+Mai.swift in Sources */,
+				6650F36A23117E230029FCED /* DispatchQueue+Mai.swift in Sources */,
 				66F46233218886E200B11713 /* AppDelegate.swift in Sources */,
-				66F4624E2188874C00B11713 /* Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -432,7 +448,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_BUNDLE_IDENTIFIER = com.v2ambition.Mai;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
@@ -452,7 +468,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_BUNDLE_IDENTIFIER = com.v2ambition.Mai;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;

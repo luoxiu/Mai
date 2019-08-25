@@ -14,14 +14,17 @@ import FileKit
 import NSObject_Rx
 
 class MaiScreenSaverView: ScreenSaverView {
-
-    private var videoPlayer: VideoPlayer!
+    
+    private let opQueue = DispatchQueue(label: UUID().uuidString)
+    private var urls: [URL] = []
+    private var currentPlayList: [URL] = []
+    private var currentPlay: URL?
 
     override init?(frame: NSRect, isPreview: Bool) {
         super.init(frame: frame, isPreview: isPreview)
 
-        wantsLayer = true
-        guard let layer = layer else { return }
+        self.wantsLayer = true
+        guard let layer = self.layer else { return }
 
         let player = AVPlayer()
         let playerLayer = AVPlayerLayer(player: player)
@@ -29,9 +32,26 @@ class MaiScreenSaverView: ScreenSaverView {
         playerLayer.frame = bounds
         playerLayer.videoGravity = .resizeAspectFill
         layer.addSublayer(playerLayer)
+        
+        let repeatPlay = { (n: Notification) -> Void in
+            (n.object as? AVPlayerItem)?.seek(to: .zero, completionHandler: nil)
+        }
+        
+        NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime,
+                                               object: nil,
+                                               queue: .main,
+                                               using: repeatPlay)
+        NotificationCenter.default.addObserver(forName: .AVPlayerItemFailedToPlayToEndTime,
+                                               object: nil,
+                                               queue: .main,
+                                               using: repeatPlay)
+        
+        func play() {
+            
+        }
+        
 
-        videoPlayer = VideoPlayer(player: player)
-
+        // MARK: Player Settings
         let shadowLayer = CALayer()
         shadowLayer.backgroundColor = NSColor.black.withAlphaComponent(0.6).cgColor
         shadowLayer.autoresizingMask = [ .layerWidthSizable, .layerHeightSizable]
@@ -39,14 +59,8 @@ class MaiScreenSaverView: ScreenSaverView {
         layer.addSublayer(shadowLayer)
 
         EventBus.isShadowed
-            .bind { (isShadowed) in
-                shadowLayer.isHidden = !isShadowed
-            }
-            .disposed(by: rx.disposeBag)
-
-        EventBus.isMuted
-            .bind { isMuted in
-                player.isMuted = isMuted
+            .bind { (shadow) in
+                shadowLayer.isHidden = !shadow
             }
             .disposed(by: rx.disposeBag)
 
@@ -55,6 +69,25 @@ class MaiScreenSaverView: ScreenSaverView {
                 player.volume = value
             }
             .disposed(by: rx.disposeBag)
+        
+        // MARK: Control Flows
+        EventBus.isStopped
+            .bind { stopped in
+                stopped ? player.pause() : player.play()
+            }
+            .disposed(by: rx.disposeBag)
+        
+        EventBus.isRepeated
+            .bind { [weak self] repeated in
+                guard let self = self else { return }
+                self.opQueue.async {
+                    guard let url = self.currentPlay else { return }
+                    self.currentPlayList = [url]
+                }
+            }
+            .disposed(by: rx.disposeBag)
+        
+        
     }
 
     required init?(coder: NSCoder) {

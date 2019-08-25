@@ -24,56 +24,37 @@ final class VideoPlayer {
 
         EventBus.newVideo
             .bind { [weak self] (url) in
-                self?.opQueue.sync {
+                guard let self = self else { return }
+                self.opQueue.sync {
                     if !EventBus.onlyLiked.value {
-                        self?.urls.insert(url, at: 0)
+                        self.urls.insert(url, at: 0)
                     }
                 }
             }
             .disposed(by: disposeBag)
-
+        
         EventBus.onlyLiked
-            .bind { [weak self] flag in
-                if flag {
+            .bind { [weak self] onlyLiked in
+                guard let self = self else { return }
+                
+                if onlyLiked {
                     let urls = VideoManager.shared.allLikedVideos
                     if !urls.isEmpty {
-                        self?.opQueue.sync {
-                            self?.urls = urls
-                            self?.play()
+                        self.opQueue.sync {
+                            self.urls = urls
+                            self.play()
                         }
                     }
                 } else {
-                    let urls = VideoManager.shared.allCachedVideo
-                    self?.opQueue.sync {
-                        self?.urls = urls
-                        self?.play()
+                    let urls = VideoManager.shared.allCachedVideos
+                    self.opQueue.sync {
+                        self.urls = urls
+                        self.play()
                     }
                 }
             }
             .disposed(by: disposeBag)
-
-        EventBus.like
-            .bind { [weak self] in
-                self?.opQueue.sync {
-                    if let url = self?.currentURL {
-                        VideoManager.shared.like(url)
-                    }
-                }
-            }
-            .disposed(by: disposeBag)
-
-        EventBus.dislike
-            .bind { [weak self] in
-                self?.opQueue.sync {
-                    if let url = self?.currentURL {
-                        VideoManager.shared.dislike(url)
-                        self?.urls.removeFirst()
-                        self?.play()
-                    }
-                }
-            }
-            .disposed(by: disposeBag)
-
+        
         EventBus.next
             .bind { [weak self] (_) in
                 guard let self = self else { return }
@@ -84,6 +65,32 @@ final class VideoPlayer {
                 }
             }
             .disposed(by: disposeBag)
+
+        EventBus.like
+            .bind { [weak self] in
+                guard let self = self else { return }
+                self.opQueue.sync {
+                    if let url = self.currentURL {
+                        VideoManager.shared.like(url)
+                    }
+                }
+            }
+            .disposed(by: disposeBag)
+
+        EventBus.dislike
+            .bind { [weak self] in
+                guard let self = self else { return }
+                self.opQueue.sync {
+                    if let url = self.currentURL {
+                        VideoManager.shared.dislike(url)
+                        self.urls.removeFirst()
+                        self.play()
+                    }
+                }
+            }
+            .disposed(by: disposeBag)
+
+
 
         let repeatPlay = { (n: Notification) -> Void in
             (n.object as? AVPlayerItem)?.seek(to: .zero, completionHandler: nil)
@@ -98,8 +105,9 @@ final class VideoPlayer {
                                                queue: .main,
                                                using: repeatPlay)
 
-        urls = VideoManager.shared.allCachedVideo
+        urls = VideoManager.shared.allCachedVideos
         Logger.debug("Video player got \(urls.count) urls from cache", "Start to play them")
+        
 
         opQueue.sync {
             play()

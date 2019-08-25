@@ -11,35 +11,41 @@ import FileKit
 import Then
 
 struct Logger {
+    
+    static var isEnabled = true
 
     enum Level {
         case error
         case warn
         case debug
         case info
-        case cheer
+        case success
     }
 
     private static func log(file: String = #file, function: String = #function, line: UInt = #line, level: Level, _ items: [Any]) {
+        
+        guard isEnabled else { return }
+        
         debugOnly {
             
             enum Cache {
                 static let formatter = DateFormatter().then { $0.dateFormat = "HH:mm:ss.SSS" }
             }
-
+            
             let time = Cache.formatter.string(from: Date())
-            var char = ""
+            var flag = ""
             switch level {
-            case .debug:        char = "🌀"
-            case .warn:         char = "❗️"
-            case .info:         char = "💧"
-            case .error:        char = "❌"
-            case .cheer:     	char = "🎉"
+            case .error:        flag = "❤️"
+            case .warn:         flag = "💛"
+            case .debug:        flag = "🖤"
+            case .info:         flag = "💙"
+            case .success:     	flag = "💚"
             }
-            let msg = items.map({ "\($0)" }).joined(separator: ", ")
+            
+            let msg = items.map({ "\($0)" }).joined(separator: " ")
             let filename = Path(file).fileName.split(separator: ".").first!
 
-            print("\(time) \(char) \(filename):\(line).\(function) ➜ \(msg)")
+            print("[Mai] \(time) \(flag) \(filename):\(line) \(function) ➜ \(msg)")
         }
     }
 
@@ -59,7 +65,7 @@ struct Logger {
         log(file: file, function: function, line: line, level: .info, items)
     }
 
-    static func cheer(file: String = #file, function: String = #function, line: UInt = #line, _ items: Any...) {
-        log(file: file, function: function, line: line, level: .cheer, items)
+    static func success(file: String = #file, function: String = #function, line: UInt = #line, _ items: Any...) {
+        log(file: file, function: function, line: line, level: .success, items)
     }
 }
