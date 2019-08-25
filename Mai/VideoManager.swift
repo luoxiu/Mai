@@ -13,8 +13,6 @@ import RxAlamofire
 import SwiftyJSON
 import FileKit
 import Cocoa
-import Reachability
-import RxReachability
 
 extension VideoManager {
     
@@ -48,7 +46,7 @@ final class VideoManager {
 
     private let disposeBag = DisposeBag()
     private let ioQueue = DispatchQueue(label: UUID().uuidString)
-    private let reachability = Reachability(hostname: K.apiHost)!
+    private let reachability = NetworkReachabilityManager(host: K.apiHost)!
     
     private var cacheTotalSize: UInt64 = 0
     
@@ -60,11 +58,7 @@ final class VideoManager {
         copyDefaultVideoIfNeeded()
         cleanCacheDirIfNeeded()
         
-        do {
-            try reachability.startNotifier()
-        } catch let e {
-            Logger.error("Failed to set up reachability notifier", e)
-        }
+        reachability.startListening()
 
         EventBus.onlyLiked
             .bind { [weak self] flag in

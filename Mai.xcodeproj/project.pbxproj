@@ -3,10 +3,11 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		660EC1FF231238F600CCC305 /* Queue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660EC1FE231238F600CCC305 /* Queue.swift */; };
 		6650F36A23117E230029FCED /* DispatchQueue+Mai.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6650F36923117E230029FCED /* DispatchQueue+Mai.swift */; };
 		6650F36E231183EE0029FCED /* BehaviorRelay+Mai.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6650F36D231183EE0029FCED /* BehaviorRelay+Mai.swift */; };
 		6650F370231184230029FCED /* NSMenuItem+Mai.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6650F36F231184230029FCED /* NSMenuItem+Mai.swift */; };
@@ -16,7 +17,6 @@
 		66F4624C2188874C00B11713 /* 5bbadd3466e1f3205b7e4e98.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 66F462432188874C00B11713 /* 5bbadd3466e1f3205b7e4e98.mp4 */; };
 		66F4624D2188874C00B11713 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66F462452188874C00B11713 /* Logger.swift */; };
 		66F4624F2188874C00B11713 /* EventBus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66F462472188874C00B11713 /* EventBus.swift */; };
-		66F462502188874C00B11713 /* VideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66F462492188874C00B11713 /* VideoPlayer.swift */; };
 		66F462512188874C00B11713 /* MaiScreenSaverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66F4624A2188874C00B11713 /* MaiScreenSaverView.swift */; };
 		66F462522188874C00B11713 /* MaiScreenSaverWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66F4624B2188874C00B11713 /* MaiScreenSaverWindow.swift */; };
 		66F462542188875F00B11713 /* VideoManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66F462532188875F00B11713 /* VideoManager.swift */; };
@@ -25,6 +25,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		660EC1FE231238F600CCC305 /* Queue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Queue.swift; sourceTree = "<group>"; };
 		6650F36923117E230029FCED /* DispatchQueue+Mai.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DispatchQueue+Mai.swift"; sourceTree = "<group>"; };
 		6650F36D231183EE0029FCED /* BehaviorRelay+Mai.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BehaviorRelay+Mai.swift"; sourceTree = "<group>"; };
 		6650F36F231184230029FCED /* NSMenuItem+Mai.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSMenuItem+Mai.swift"; sourceTree = "<group>"; };
@@ -37,7 +38,6 @@
 		66F462432188874C00B11713 /* 5bbadd3466e1f3205b7e4e98.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = 5bbadd3466e1f3205b7e4e98.mp4; sourceTree = "<group>"; };
 		66F462452188874C00B11713 /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		66F462472188874C00B11713 /* EventBus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventBus.swift; sourceTree = "<group>"; };
-		66F462492188874C00B11713 /* VideoPlayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoPlayer.swift; sourceTree = "<group>"; };
 		66F4624A2188874C00B11713 /* MaiScreenSaverView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MaiScreenSaverView.swift; sourceTree = "<group>"; };
 		66F4624B2188874C00B11713 /* MaiScreenSaverWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MaiScreenSaverWindow.swift; sourceTree = "<group>"; };
 		66F462532188875F00B11713 /* VideoManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoManager.swift; sourceTree = "<group>"; };
@@ -127,6 +127,7 @@
 				66F462452188874C00B11713 /* Logger.swift */,
 				66F462472188874C00B11713 /* EventBus.swift */,
 				66F4625521888A0D00B11713 /* fn.swift */,
+				660EC1FE231238F600CCC305 /* Queue.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -134,7 +135,6 @@
 		66F462482188874C00B11713 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				66F462492188874C00B11713 /* VideoPlayer.swift */,
 				66F4624A2188874C00B11713 /* MaiScreenSaverView.swift */,
 				66F4624B2188874C00B11713 /* MaiScreenSaverWindow.swift */,
 			);
@@ -183,6 +183,7 @@
 				TargetAttributes = {
 					66F4622E218886E200B11713 = {
 						CreatedOnToolsVersion = 10.0;
+						LastSwiftMigration = 1030;
 						SystemCapabilities = {
 							com.apple.Sandbox = {
 								enabled = 0;
@@ -251,34 +252,11 @@
 			files = (
 			);
 			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Mai/Pods-Mai-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
-				"${BUILT_PRODUCTS_DIR}/FileKit/FileKit.framework",
-				"${BUILT_PRODUCTS_DIR}/NSObject+Rx/NSObject_Rx.framework",
-				"${BUILT_PRODUCTS_DIR}/ReachabilitySwift/Reachability.framework",
-				"${BUILT_PRODUCTS_DIR}/RxAlamofire/RxAlamofire.framework",
-				"${BUILT_PRODUCTS_DIR}/RxCocoa/RxCocoa.framework",
-				"${BUILT_PRODUCTS_DIR}/RxReachability/RxReachability.framework",
-				"${BUILT_PRODUCTS_DIR}/RxSwift/RxSwift.framework",
-				"${BUILT_PRODUCTS_DIR}/SwiftyJSON/SwiftyJSON.framework",
-				"${BUILT_PRODUCTS_DIR}/Then/Then.framework",
+				"${PODS_ROOT}/Target Support Files/Pods-Mai/Pods-Mai-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-			);
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FileKit.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/NSObject_Rx.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Reachability.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxAlamofire.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxCocoa.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxReachability.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxSwift.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyJSON.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Then.framework",
+				"${PODS_ROOT}/Target Support Files/Pods-Mai/Pods-Mai-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -295,10 +273,10 @@
 				66F4624F2188874C00B11713 /* EventBus.swift in Sources */,
 				6650F36E231183EE0029FCED /* BehaviorRelay+Mai.swift in Sources */,
 				66F462542188875F00B11713 /* VideoManager.swift in Sources */,
-				66F462502188874C00B11713 /* VideoPlayer.swift in Sources */,
 				66F462512188874C00B11713 /* MaiScreenSaverView.swift in Sources */,
 				66F4625621888A0D00B11713 /* fn.swift in Sources */,
 				66F4624D2188874C00B11713 /* Logger.swift in Sources */,
+				660EC1FF231238F600CCC305 /* Queue.swift in Sources */,
 				66F462522188874C00B11713 /* MaiScreenSaverWindow.swift in Sources */,
 				6650F370231184230029FCED /* NSMenuItem+Mai.swift in Sources */,
 				6650F36A23117E230029FCED /* DispatchQueue+Mai.swift in Sources */,
@@ -451,7 +429,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_BUNDLE_IDENTIFIER = com.v2ambition.Mai;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -471,7 +449,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_BUNDLE_IDENTIFIER = com.v2ambition.Mai;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
