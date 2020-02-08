@@ -26,7 +26,7 @@ extension VideoManager {
         static let dislikeDir = Path.userMovies + "Mai" + ".dislike"
         
         static let apiHost = "animeloop.org"
-        static let baseURL = "https://animeloop.org/api/v2"
+        static let baseURL = "https://api.animeloop.org"
         
         static let descendingByCreationDate = { (lhs: Path, rhs: Path) -> Bool in
             guard let ld = lhs.creationDate, let rd = rhs.creationDate else { return true }
@@ -208,12 +208,22 @@ final class VideoManager {
         Logger.info("Fetching...")
 
         fetchDisposable = RxAlamofire
-            .json(.get,
-                  K.baseURL + "/rand/loop",
-                  parameters: ["full": true, "limit": 1]
+            .json(
+                .post,
+                "\(K.baseURL)/graphql",
+                parameters: [
+                    "query": """
+                        query getRandomLoops {
+                          randomLoops(limit: \(1), collectionSlug: "\("telegram-channel-the-best-animeloop")") {
+                            uuid
+                            files
+                          }
+                        }
+                    """
+                ]
             )
             .flatMap { (obj) -> Observable<(String, Data)> in
-                if let url = JSON(obj)["data"][0]["files"]["mp4_1080p"].string {
+                if let url = JSON(obj)["data"]["randomLoops"][0]["files"]["mp4_1080p"].string {
                     return RxAlamofire.data(.get, url).map { (url, $0) }
                 }
                 return Observable.empty()

@@ -31,7 +31,7 @@ DEPENDENCIES:
   - Then
 
 SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
+  trunk:
     - Alamofire
     - FileKit
     - "NSObject+Rx"
@@ -57,4 +57,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 418619b87f363d372a7a1644cc3a6ca400e7cc87
 
-COCOAPODS: 1.6.0.beta.1
+COCOAPODS: 1.8.4
